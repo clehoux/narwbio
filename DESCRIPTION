@@ -1,0 +1,22 @@
+Package: narwbio
+Type: Package
+Title: NARW Net energy index dervied from copepod dry weight
+Version: 0.1.0
+Author: Caroline Lehoux
+Maintainer: The package maintainer <caroline.lehoux@dfo-mpo.gc.ca>
+Description: Uses copepods dryweight data from a wide range of sources including model output. You can use 3D data with deopth layer of 10m from model outputs or you can use depth integrated data. The 3rd dimension is then calcualted with vertical distribution GAM from Lehoux et al. 2020 or Comtois et al. in prep. Applies the NARW model from Gavrilchuk et al. modified by Lehoux et al. 2020 to include more copepod species..
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Depends: 
+    R (>= 2.10)
+RoxygenNote: 7.2.1
+Imports: 
+    dplyr,
+    magrittr,
+    mgcv,
+    stringr,
+    tidyr,
+    utils
+URL: https://github.com/clehoux/narwbio
+BugReports: https://github.com/clehoux/narwbio/issues
