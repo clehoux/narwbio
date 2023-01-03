@@ -260,7 +260,7 @@
 
   # join data
   sp_b <- rbind(cfin_b, chyp_b, temo_b, psca_b)
-
+if(any(duplicated(sp_b[,c(ID,"Taxa", "Zsampled")]))) stop("duplicates found rework vertical distribution code")
   #sp_b<- sp_b[!duplicated(sp_b[,c(ID,"Taxa", "Zsampled")]),]# in some cases when the vertical distribution creates 2 times the same layer, should be resolve with +9
 
   # function for summarize
@@ -335,7 +335,7 @@
       sp.outa <- sp.out %>%
       dplyr::group_by(get(ID)) %>%
       dplyr::slice(., which.max(get(stEnet)))
-      cols_to_keep=c(paste0("Ei.", pat2),paste0("Eo.",pat,"_BT.K"),paste0("Enet.",pat,".K"),paste0("Dp.",pat,".K"))
+      cols_to_keepa=c(paste0("Ei.", pat2),paste0("Eo.",pat,"_BT.K"),paste0("Enet.",pat,".K"),paste0("Dp.",pat,".K"))
 
       if(split_80){
       sp.outm80 <- sp.out %>% dplyr::filter(Zsampled <= 80) %>%
@@ -347,7 +347,7 @@
         dplyr::slice(., which.max(get(stEnet))) %>%  dplyr::rename_with(starts_with(c("E", "Dp")), .fn=~ paste0(.x, "_p80")) %>%  dplyr::rename(ED.max_Zp80=Zsampled)
 
       sp.outb <- dplyr::full_join(sp.outm80, sp.outp80, by="get(ID)")
-      cols_to_keep=c("ED.max_Zm80","ED.max_Zp80", c(paste0("Ei.", pat2,"_m80"),paste0("Eo.",pat,"_BT.K_m80"),paste0("Enet.",pat,".K_m80"),paste0("Dp.",pat,".K_m80")),
+      cols_to_keepb=c("ED.max_Zm80","ED.max_Zp80", c(paste0("Ei.", pat2,"_m80"),paste0("Eo.",pat,"_BT.K_m80"),paste0("Enet.",pat,".K_m80"),paste0("Dp.",pat,".K_m80")),
                      c(paste0("Ei.", pat2,"_p80"),paste0("Eo.",pat,"_BT.K_p80"),paste0("Enet.",pat,".K_p80"),paste0("Dp.",pat,".K_p80")))
 
       sp.outb[, ID] <- sp.outb$`get(ID)`
@@ -359,26 +359,57 @@
 # 80m not done from here, start here...................
 
 if(state=="pregnant"){
-  bioen <- sp.out %>%
+  bioena <- sp.outa %>%
     dplyr::ungroup() %>%
-    dplyr::select(ID, Energy_kJ_g_Z, Zsampled, all_of(cols_to_keep)) %>%
-    dplyr::rename(ED.max = "Energy_kJ_g_Z", ED.max_Z = "Zsampled", NARW_Eout.preg = grep(cols_to_keep, pattern="Eo", value=T), NARW_Ein =grep(cols_to_keep, pattern="Ei", value=T), NARW_Enet.preg = grep(cols_to_keep, pattern="Enet", value=T), Minimum_prey_density_gm3=grep(cols_to_keep, pattern="Dp", value=T))
+    dplyr::select(all_of(ID), Energy_kJ_g_Z, Zsampled, all_of(cols_to_keepa)) %>%
+    dplyr::rename(ED.max = "Energy_kJ_g_Z", ED.max_Z = "Zsampled", NARW_Eout.preg = grep(cols_to_keepa, pattern="Eo", value=T), NARW_Ein =grep(cols_to_keepa, pattern="Ei", value=T), NARW_Enet.preg = grep(cols_to_keepa, pattern="Enet", value=T), Minimum_prey_density_gm3=grep(cols_to_keepa, pattern="Dp", value=T))
+if(split_80){
+  bioenb <- sp.outb %>%
+    dplyr::ungroup() %>%
+    dplyr::select(all_of(ID), Energy_kJ_g_Z_m80,  Energy_kJ_g_Z_p80,all_of(cols_to_keepb)) %>%
+    dplyr::rename(ED.max_m80 = "Energy_kJ_g_Z_m80",ED.max_p80 = "Energy_kJ_g_Z_p80", NARW_Eout.preg_m80 = grep(cols_to_keepb, pattern=paste0("Eo.",pat,"_BT.K_m80"), value=T, fixed=T) ,NARW_Eout.preg_p80 = grep(cols_to_keepb, pattern=paste0("Eo.",pat,"_BT.K_p80"), value=T, fixed=T),
+                                                                                     NARW_Ein_m80 =grep(cols_to_keepb, pattern=paste0("Ei.", pat2,"_m80"), value=T),
+                                                                                     NARW_Ein_p80 =grep(cols_to_keepb, pattern=paste0("Ei.", pat2,"_p80"), value=T),
+                               NARW_Enet.preg_m80 = grep(cols_to_keepb, pattern=paste0("Enet.",pat,".K_m80"), value=T),
+                               NARW_Enet.preg_p80 = grep(cols_to_keepb, pattern=paste0("Enet.",pat,".K_p80"), value=T),
+                               Minimum_prey_density_gm3_m80=grep(cols_to_keepb, pattern=paste0("Dp.",pat,".K_m80"), value=T),
+                                Minimum_prey_density_gm3_p80=grep(cols_to_keepb, pattern=paste0("Dp.",pat,".K_p80"), value=T))
+ }
 }
+
   if(state!="pregnant"){
-    bioen <- sp.out %>%
+    bioena <- sp.outa %>%
       dplyr::ungroup() %>%
-      dplyr::select(all_of(ID), Energy_kJ_g_Z, Zsampled, all_of(cols_to_keep)) %>%
-      dplyr::rename(ED.max = "Energy_kJ_g_Z", ED.max_Z = "Zsampled", NARW_Eout = grep(cols_to_keep, pattern="Eo", value=T), NARW_Ein =grep(cols_to_keep, pattern="Ei", value=T), NARW_Enet = grep(cols_to_keep, pattern="Enet", value=T), Minimum_prey_density_gm3=grep(cols_to_keep, pattern="Dp", value=T))
-  }
+      dplyr::select(all_of(ID), Energy_kJ_g_Z, Zsampled, all_of(cols_to_keepa)) %>%
+      dplyr::rename(ED.max = "Energy_kJ_g_Z", ED.max_Z = "Zsampled", NARW_Eout = grep(cols_to_keepa, pattern="Eo", value=T), NARW_Ein =grep(cols_to_keepa, pattern="Ei", value=T), NARW_Enet = grep(cols_to_keepa, pattern="Enet", value=T), Minimum_prey_density_gm3=grep(cols_to_keepa, pattern="Dp", value=T))
+
+    if(split_80){
+      bioenb <- sp.outb %>%
+        dplyr::ungroup() %>%
+        dplyr::select(all_of(ID), Energy_kJ_g_Z_m80,  Energy_kJ_g_Z_p80,Zsampled, all_of(cols_to_keepb)) %>%
+        dplyr::rename(ED.max_m80 = "Energy_kJ_g_Z_m80",ED.max_p80 = "Energy_kJ_g_Z_p80", NARW_Eout_m80 = grep(cols_to_keepb, pattern=paste0("Eo.",pat,"_BT.K_m80"), value=T, fixed=T) ,NARW_Eout_p80 = grep(cols_to_keepb, pattern=paste0("Eo.",pat,"_BT.K_p80"), value=T, fixed=T),
+                      NARW_Ein_m80 =grep(cols_to_keepb, pattern=paste0("Ei.", pat2,"_m80"), value=T),
+                      NARW_Ein_p80 =grep(cols_to_keepb, pattern=paste0("Ei.", pat2,"_p80"), value=T),
+                      NARW_Enet_m80 = grep(cols_to_keepb, pattern=paste0("Enet.",pat,".K_m80"), value=T),
+                      NARW_Enet_p80 = grep(cols_to_keepb, pattern=paste0("Enet.",pat,".K_p80"), value=T),
+                      Minimum_prey_density_gm3_m80=grep(cols_to_keepb, pattern=paste0("Dp.",pat,".K_m80"), value=T),
+                      Minimum_prey_density_gm3_m80=grep(cols_to_keepb, pattern=paste0("Dp.",pat,".K_p80"), value=T))
+    }
+
+    }
+
+
+  if(split_80) bioen <-  full_join(bioena, bioenb)
+  if(!split_80) bioen <-  bioena
 
   # si contient d?j? les colonnes
-  if ("NARW_Enet.preg" %in% colnames_out) dat_final <- suppressMessages(dplyr::left_join(dat[, -which(colnames(dat) %in% colnames(bioen)[2:7])], bioen))
+  if ("NARW_Enet.preg" %in% colnames_out) dat_final <- suppressMessages(dplyr::left_join(dat[, -which(colnames(dat) %in% colnames(bioen)[2:ncol(boen)])], bioen))
   # si ne contient pas les colonnes
   if (!"NARW_Enet.preg" %in% colnames_out) dat_final <- suppressMessages(dplyr::left_join(dat, bioen))
   # check nrow NA
 
   # si ne contient pas tous les colonnes
-  if (!"NARW_Enet.preg" %in% colnames_out) dat_final <- dat_final[, c(colnames_out, colnames(bioen)[2:7])]
+  if (!"NARW_Enet.preg" %in% colnames_out) dat_final <- dat_final[, c(colnames_out, colnames(bioen)[2:ncol(bioen)])]
 
   # si contient d?j? les colonnes
   if ("NARW_Enet.preg" %in% colnames_out) dat_final <- dat_final[, colnames_out]
@@ -387,8 +418,22 @@ if(state=="pregnant"){
   if (nrow(dat_final[duplicated(dat_final[, ID]), ]) != 0) message("duplicated labels")
   if (nrow(dat_final) != nrow(dat)) stop("join not done correctly")
 
-  if(state=="pregnant") dat_final$NARW_Enet.preg[dat_final$NARW_Enet.preg == -1] <- NA
-  if(state!="pregnant") dat_final$NARW_Enet[dat_final$NARW_Enet == -1] <- NA
+  if(state=="pregnant") {
+    dat_final$NARW_Enet.preg[dat_final$NARW_Enet.preg == -1] <- NA
+    if(split_80){
+      dat_final$NARW_Enet.preg_m80[dat_final$NARW_Enet.preg_m80 == -1] <- NA
+      dat_final$NARW_Enet.preg_p80[dat_final$NARW_Enet.preg_p80 == -1] <- NA
+    }
+
+    }
+  if(state!="pregnant"){
+    dat_final$NARW_Enet[dat_final$NARW_Enet == -1] <- NA
+    if(split_80){
+      dat_final$NARW_Enet.preg_m80[dat_final$NARW_Enet.preg_m80 == -1] <- NA
+      dat_final$NARW_Enet.preg_p80[dat_final$NARW_Enet.preg_p80 == -1] <- NA
+    }
+
+  }
 
   return(dat_final)
 }
