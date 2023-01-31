@@ -393,7 +393,7 @@ if(split_80){
                       NARW_Enet_m80 = grep(cols_to_keepb, pattern=paste0("Enet.",pat,".K_m80"), value=T),
                       NARW_Enet_p80 = grep(cols_to_keepb, pattern=paste0("Enet.",pat,".K_p80"), value=T),
                       Minimum_prey_density_gm3_m80=grep(cols_to_keepb, pattern=paste0("Dp.",pat,".K_m80"), value=T),
-                      Minimum_prey_density_gm3_m80=grep(cols_to_keepb, pattern=paste0("Dp.",pat,".K_p80"), value=T))
+                      Minimum_prey_density_gm3_p80=grep(cols_to_keepb, pattern=paste0("Dp.",pat,".K_p80"), value=T))
     }
 
     }
