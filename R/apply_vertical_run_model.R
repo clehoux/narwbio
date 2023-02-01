@@ -507,7 +507,7 @@ if(split_80){
        datx$predcfin <- tryCatch( # if months are missing
          {mgcv::predict.gam(mod.cfin, datx, type = "response", exclude = "s(ID)", newdata.guaranteed = T) }, error = function(e) {return(NA)})
        maxcfin<- max(datx$predcfin)
-       if(!is.na(maxcfin)){if(maxcfin < 0.85) {warning(paste0(ID,"maxcfin < 0.85"))}}
+       if(!is.na(maxcfin)){if(maxcfin < 0.85) {warning(paste0(datx[1,"ID"],"maxcfin < 0.85"))}}
        datx$predcfin <-  datx$predcfin/maxcfin
        datx$propcfin <- c(NA, diff(datx$predcfin, lag = 1)) # lag de 1 parce que j'ai entr? en bloc de 10 donc valeur -1 est un bloc de 10
        datx$propcfin[datx$propcfin < 0] <- 0
@@ -516,7 +516,7 @@ if(split_80){
        datx$predchyp <- tryCatch( # if months are missing
          {mgcv::predict.gam(mod.chyp, datx, type = "response", exclude = "s(ID)", newdata.guaranteed = T) }, error = function(e) {return(NA)})
        maxchyp<- max(datx$predchyp)
-       if(!is.na(maxchyp)){if(maxchyp < 0.85) {warning(paste0(ID,"maxchyp < 0.85"))}}
+       if(!is.na(maxchyp)){if(maxchyp < 0.85) {warning(paste0(datx[1,"ID"],"maxchyp < 0.85"))}}
        datx$predchyp <-  datx$predchyp/maxchyp
        datx$propchyp <- c(NA, diff(datx$predchyp, lag = 1)) # lag de 1 parce que j'ai entr? en bloc de 10 donc valeur -1 est un bloc de 10
        datx$propchyp[datx$propchyp < 0] <- 0
@@ -593,7 +593,7 @@ if(split_80){
 
        datx$predcfin <- mgcv::predict.gam(mod.cfin, datx, type = "response", exclude = "s(ID)", newdata.guaranteed = T)
        maxcfin<- max(datx$predcfin)
-       if(maxcfin < 0.85) warning(paste0(ID,"maxcfin < 0.85"))
+       if(maxcfin < 0.85) warning(paste0(datx[1,"ID"],"maxcfin < 0.85"))
        datx$predcfin <-  datx$predcfin/maxcfin
        datx$propcfin <- c(NA, diff(datx$predcfin, lag = 1)) # lag de 1 parce que j'ai entr? en bloc de 10 donc valeur -1 est un bloc de 10
        datx$propcfin[datx$propcfin < 0] <- 0
@@ -601,7 +601,7 @@ if(split_80){
 
        datx$predchyp <- mgcv::predict.gam(mod.chyp, datx, type = "response", exclude = "s(ID)", newdata.guaranteed = T)
        maxchyp<- max(datx$predchyp)
-       if(maxchyp < 0.85) warning(paste0(ID,"maxchyp < 0.85"))
+       if(maxchyp < 0.85) warning(paste0(datx[1,"ID"],"maxchyp < 0.85"))
        datx$predchyp <-  datx$predchyp/maxchyp
        datx$propchyp <- c(NA, diff(datx$predchyp, lag = 1)) # lag de 1 parce que j'ai entr? en bloc de 10 donc valeur -1 est un bloc de 10
        datx$propchyp[datx$propchyp < 0] <- 0
@@ -609,7 +609,7 @@ if(split_80){
 
        datx$predtemo <- mgcv::predict.gam(mod.temo, datx, type = "response")
        maxtemo<- max(datx$predtemo)
-       if(maxtemo < 0.85) warning(paste0(ID,"maxtemo < 0.85"))
+       if(maxtemo < 0.85) warning(paste0(datx[1,"ID"],"maxtemo < 0.85"))
        datx$predtemo <-  datx$predtemo/maxtemo
        datx$proptemo <- c(NA, diff(datx$predtemo, lag = 1)) # lag de 1 parce que j'ai entr? en bloc de 10 donc valeur -1 est un bloc de 10
        datx$proptemo[datx$proptemo < 0] <- 0
@@ -617,7 +617,7 @@ if(split_80){
 
        datx$predpsca <- mgcv::predict.gam(mod.psca, datx, type = "response")
        maxpsca<- max(datx$predpsca)
-       if(maxpsca < 0.85) warning(paste0(ID,"maxpsca < 0.85"))
+       if(maxpsca < 0.85) warning(paste0(datx[1,"ID"],"maxpsca < 0.85"))
        datx$predpsca <-  datx$predpsca/maxpsca
        datx$proppsca <- c(NA, diff(datx$predpsca, lag = 1)) # lag de 1 parce que j'ai entr? en bloc de 10 donc valeur -1 est un bloc de 10
        datx$proppsca[datx$proppsca < 0] <- 0
