@@ -609,14 +609,16 @@ if(split_80){
 
        datx$predtemo <- mgcv::predict.gam(mod.temo, datx, type = "response")
        maxtemo<- max(datx$predtemo)
-       if(!is.na(maxtemo)){if(maxchyp < 0.85) {warning(paste0(datx[1,ID],"maxtemo < 0.85"))}}datx$predtemo <-  datx$predtemo/maxtemo
+       if(!is.na(maxtemo)){if(maxchyp < 0.85) {warning(paste0(datx[1,ID],"maxtemo < 0.85"))}}
+       datx$predtemo <-  datx$predtemo/maxtemo
        datx$proptemo <- c(NA, diff(datx$predtemo, lag = 1)) # lag de 1 parce que j'ai entr? en bloc de 10 donc valeur -1 est un bloc de 10
        datx$proptemo[datx$proptemo < 0] <- 0
        datx$temo_kj_str <- datx$temo_kj * datx$proptemo
 
        datx$predpsca <- mgcv::predict.gam(mod.psca, datx, type = "response")
        maxpsca<- max(datx$predpsca)
-       if(!is.na(maxpsca)){if(maxpsca < 0.85) {warning(paste0(datx[1,ID],"maxpsca < 0.85"))}}  datx$predpsca <-  datx$predpsca/maxpsca
+       if(!is.na(maxpsca)){if(maxpsca < 0.85) {warning(paste0(datx[1,ID],"maxpsca < 0.85"))}}
+       datx$predpsca <-  datx$predpsca/maxpsca
        datx$proppsca <- c(NA, diff(datx$predpsca, lag = 1)) # lag de 1 parce que j'ai entr? en bloc de 10 donc valeur -1 est un bloc de 10
        datx$proppsca[datx$proppsca < 0] <- 0
        datx$psca_kj_str <- datx$psca_kj * datx$proppsca
