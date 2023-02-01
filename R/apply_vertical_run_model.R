@@ -543,23 +543,23 @@ if(split_80){
        # mod
        if (datkji$season == "esum" & datkji$D_N == "D") {
          mod.cfin <- mcfin_glac_c_gsl_esum_D
-         if (is.na(datkji$Zdev_Ch4.6_mgm2)) mod.chyp <- mchyp_c_gsl_esum_D
-         if (!is.na(datkji$Zdev_Ch4.6_mgm2)) mod.chyp <- mchyp_dev_catD450
+         if (is.na(datkji$dev_index)) mod.chyp <- mchyp_c_gsl_esum_D
+         if (!is.na(datkji$dev_index)) mod.chyp <- mchyp_dev_catD450
        }
        if (datkji$season == "esum" & datkji$D_N == "N") {
          mod.cfin <- mcfin_glac_c_gsl_esum_N
-         if (is.na(datkji$Zdev_Ch4.6_mgm2)) mod.chyp <- mchyp_c_gsl_esum_N
-         if (!is.na(datkji$Zdev_Ch4.6_mgm2)) mod.chyp <- mchyp_dev_catN450
+         if (is.na(datkji$dev_index)) mod.chyp <- mchyp_c_gsl_esum_N
+         if (!is.na(datkji$dev_index)) mod.chyp <- mchyp_dev_catN450
        }
        if (datkji$season == "lsum" & datkji$D_N == "D") {
          mod.cfin <- mcfin_glac_c_gsl_lsum_D
-         if (is.na(datkji$Zdev_Ch4.6_mgm2)) mod.chyp <- mchyp_c_gsl_lsum
-         if (!is.na(datkji$Zdev_Ch4.6_mgm2)) mod.chyp <- mchyp_dev_catD450
+         if (is.na(datkji$dev_index)) mod.chyp <- mchyp_c_gsl_lsum
+         if (!is.na(datkji$dev_index)) mod.chyp <- mchyp_dev_catD450
        }
        if (datkji$season == "lsum" & datkji$D_N == "N") {
          mod.cfin <- mcfin_glac_c_gsl_lsum_N
-         if (is.na(datkji$Zdev_Ch4.6_mgm2)) mod.chyp <- mchyp_c_gsl_lsum
-         if (!is.na(datkji$Zdev_Ch4.6_mgm2)) mod.chyp <- mchyp_dev_catN450
+         if (is.na(datkji$dev_index)) mod.chyp <- mchyp_c_gsl_lsum
+         if (!is.na(datkji$dev_index)) mod.chyp <- mchyp_dev_catN450
        }
        if (datkji$D_N == "D") {
          mod.temo <- mtem_c_gsl_D
@@ -574,11 +574,11 @@ if(split_80){
          mod.chyp <- mchyp_c_gsl_fall
        }
        if (datkji$season == "fall" & datkji$D_N == "D") {
-         if (!is.na(datkji$Zdev_Ch4.6_mgm2)) mod.chyp <- mchyp_dev_catD450
+         if (!is.na(datkji$dev_index)) mod.chyp <- mchyp_dev_catD450
        }
 
        if (datkji$season == "fall" & datkji$D_N == "N") {
-         if (!is.na(datkji$Zdev_Ch4.6_mgm2)) mod.chyp <- mchyp_dev_catN450
+         if (!is.na(datkji$dev_index)) mod.chyp <- mchyp_dev_catN450
        }
        ## cr?ation des pr?dictions th?oriques#
        Zsampled <- seq(0, datkji$Zstation + 9, 10) # Z sampled en intervalle de 10 #
