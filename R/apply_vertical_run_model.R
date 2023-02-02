@@ -195,30 +195,21 @@
 
     if(!"Zdev_Ch4.6_mgm2" %in% colnames(dat3)) dat3$Zdev_Ch4.6_mgm2 <- NA
 
-    dat3 <- dat3 %>%
-      dplyr::mutate(
-        dev_index = ifelse(!"dev_index" %in% colnames(dat) &
-          !"civ.hyp_dev.index_station" %in% colnames(dat) &
-          !"civ.hyp_dev.index_transect" %in% colnames(dat), NA,
-        ifelse("dev_index" %in% colnames(dat), dev_index,
-          ifelse("civ.hyp_dev.index_station" %in% colnames(dat) &
-            !"civ.hyp_dev.index_transect" %in% colnames(dat), civ.hyp_dev.index_station,
-          ifelse(!"civ.hyp_dev.index_station" %in% colnames(dat) &
-            "civ.hyp_dev.index_transect" %in% colnames(dat), civ.hyp_dev.index_transect,
-          ifelse("civ.hyp_dev.index_station" %in% colnames(dat) &
-            "civ.hyp_dev.index_transect" %in% colnames(dat) &
-            is.na(civ.hyp_dev.index_station), civ.hyp_dev.index_transect, civ.hyp_dev.index_station)
-          )
-          )
-        )
-        ),
-        dev_index=ifelse(dev_index < 0.65, "Active",
-                         ifelse(dev_index >= 0.65 & dev_index < 0.85, yes ="Transition",
-                                ifelse(dev_index >= 0.85, "Diapause", NA)))# Zdev_Ch4.6_mgm2 = ifelse(!"Zdev_Ch4.6_mgm2" %in% colnames(dat), NA, Zdev_Ch4.6_mgm2)
-      ) %>%
-      dplyr::select(all_of(ID), season, Day_Night, Region,Month,Zstation, dev_index, cfin_kj, chyp_kj, psca_kj, temo_kj, Zdev_Ch4.6_mgm2)
 
-    dat3 <- dplyr::rename(dat3, D_N = Day_Night)
+    if(!any(grepl(colnames(dat), pattern="dev_index"))  &  !any(grepl(colnames(dat),pattern="civ.hyp_dev.index_station")) & !any(grepl(colnames(dat), pattern="civ.hyp_dev.index_transect"))) dat3 <-  dat3 %>%  mutate(dev_index=NA)
+    if(any(grepl(colnames(dat), pattern="dev_index"))) dat3 <-  dat3 %>%  mutate(dev_index=dev_index)
+    if(!any(grepl(colnames(dat),pattern="civ.hyp_dev.index_station")) & any(grepl(colnames(dat), pattern="civ.hyp_dev.index_transect"))) dat3 <- dat3 %>%  mutate(dev_index=civ.hyp_dev.index_transect)
+    if(any(grepl(colnames(dat),pattern="civ.hyp_dev.index_station")) & any(grepl(colnames(dat), pattern="civ.hyp_dev.index_transect"))) dat3 <- dat3 %>%  mutate(dev_index=ifelse(is.na(civ.hyp_dev.index_station),civ.hyp_dev.index_transect, civ.hyp_dev.index_station))
+
+dat3 <- dat3 %>% mutate(dev_index = ifelse(dev_index < 0.65, "Active",
+      ifelse(dev_index >= 0.65 & dev_index < 0.85, yes = "Transition",
+        ifelse(dev_index >= 0.85, "Diapause", NA)
+      )
+    ) # Zdev_Ch4.6_mgm2 = ifelse(!"Zdev_Ch4.6_mgm2" %in% colnames(dat), NA, Zdev_Ch4.6_mgm2)
+  ) %>%
+  dplyr::select(all_of(ID), season, Day_Night, Region, Month, Zstation, dev_index, cfin_kj, chyp_kj, psca_kj, temo_kj, Zdev_Ch4.6_mgm2)
+
+dat3 <- dplyr::rename(dat3, D_N = Day_Night)
 
     dat_out <- kj_df(datkj = dat3, ID=ID)
 
@@ -403,7 +394,7 @@ if(split_80){
   if(!split_80) bioen <-  bioena
 
   # si contient d?j? les colonnes
-  if ("NARW_Enet.preg" %in% colnames_out) dat_final <- suppressMessages(dplyr::left_join(dat[, -which(colnames(dat) %in% colnames(bioen)[2:ncol(boen)])], bioen))
+  if ("NARW_Enet.preg" %in% colnames_out) dat_final <- suppressMessages(dplyr::left_join(dat[, -which(colnames(dat) %in% colnames(bioen)[2:ncol(bioen)])], bioen))
   # si ne contient pas les colonnes
   if (!"NARW_Enet.preg" %in% colnames_out) dat_final <- suppressMessages(dplyr::left_join(dat, bioen))
   # check nrow NA
@@ -593,7 +584,7 @@ if(split_80){
 
        datx$predcfin <- mgcv::predict.gam(mod.cfin, datx, type = "response", exclude = "s(ID)", newdata.guaranteed = T)
        maxcfin<- max(datx$predcfin)
-       if(!is.na(maxcfin)){if(maxchyp < 0.85) {warning(paste0(datx[1,ID],"maxcfin < 0.85"))}}
+       if(!is.na(maxcfin)){if(maxcfin < 0.85) {warning(paste0(datx[1,ID],"maxcfin < 0.85"))}}
        datx$predcfin <-  datx$predcfin/maxcfin
        datx$propcfin <- c(NA, diff(datx$predcfin, lag = 1)) # lag de 1 parce que j'ai entr? en bloc de 10 donc valeur -1 est un bloc de 10
        datx$propcfin[datx$propcfin < 0] <- 0
@@ -609,7 +600,7 @@ if(split_80){
 
        datx$predtemo <- mgcv::predict.gam(mod.temo, datx, type = "response")
        maxtemo<- max(datx$predtemo)
-       if(!is.na(maxtemo)){if(maxchyp < 0.85) {warning(paste0(datx[1,ID],"maxtemo < 0.85"))}}
+       if(!is.na(maxtemo)){if(maxtemo < 0.85) {warning(paste0(datx[1,ID],"maxtemo < 0.85"))}}
        datx$predtemo <-  datx$predtemo/maxtemo
        datx$proptemo <- c(NA, diff(datx$predtemo, lag = 1)) # lag de 1 parce que j'ai entr? en bloc de 10 donc valeur -1 est un bloc de 10
        datx$proptemo[datx$proptemo < 0] <- 0
